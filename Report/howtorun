@@ -1,0 +1,12 @@
+#These are the commands I run
+./mainscript.sh ./config/config.yaml
+./vaptish.sh prouts 500_firstexons_renamed
+./q1trees.sh ./500_firstexons_renamed ./500_exon_trees
+./q2trees.sh ./whole_genes_concatenated ./wh_genes_trees
+
+
+./treecomparison.sh ./wh_genes_trees ./large_alignment/firstry.treefile ./supertree_vs_39genes_comparison.txt
+./treecomparison.sh ./500_exon_trees ./larhe_alignment/firstry.treefile ./supertree_vs_500exontrees_comparison.txt
+
+grep "RF"  supertree_vs_39genes_comparison.txt | sort -k2,2 -n  > 39genes_vs_supertree_comp_sorted.txt
+grep "RF" supertree_vs_500exontrees_comparison.txt | sort -k2,2 -n > 500ex_trees_vs_supertree_comp_sorted.txt

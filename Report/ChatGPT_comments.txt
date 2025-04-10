@@ -1,0 +1,263 @@
+As of 31/03/2025 the issues below haven't been addressed: 
+
+>pavlaras.sh
+
+General Feedback:
+
+Your script is well-structured and follows good practices, such as using set -e for error handling, logging messages, and defining modular functions. However, there are some potential issues and areas for improvement:
+
+    Error Handling:
+
+        Instead of using exit 1 everywhere, consider defining a dedicated error_exit function for cleaner error messages and optional debugging output.
+
+        The download_data function calls error 1, but error is undefined. It should be exit 1.
+
+    Logging Issues:
+
+        The end_message function uses trap "mv ./log.txt ./exit_log.txt" EXIT, which will overwrite exit_log.txt every time the script runs. Instead, append a timestamp to avoid losing previous logs.
+
+        The export log_file=./log.txt inside end_message is redundant.
+
+    Portability & Compatibility:
+
+        zless is assumed to be available, but it is not installed by default in many environments. Consider using zcat instead:
+
+    zcat "${inputdata}" | while read x;
+
+    head --lines=1 can be replaced with head -n 1 for broader compatibility.
+
+Code Structure Issues:
+
+    The gooe function is quite complex; refactoring the nested loops into helper functions would improve readability.
+
+    Instead of local STOP=$((cntr + c )), consider renaming STOP to next_exon_index for clarity.
+
+Unnecessary export Statements:
+
+    Some variables (e.g., Final_output_dir) do not need to be exported unless accessed by subprocesses.
+
+
+./vaptish.sh 
+
+
+### **General Feedback**
+Your script is simple and serves the purpose of renaming files and modifying FASTA headers. However, there are some **issues and limitations**:
+
+#### **1. Error Handling and Robustness**
+- The script assumes that `ls ./${in_folder}` will always work, but if `in_folder` does not exist, it will fail.
+- It lacks proper validation to check whether input and output directories exist.
+
+#### **2. Efficiency Issues**
+- Using `ls | wc -l` to count files is **not reliable** (e.g., it counts hidden files).
+- `cat "${FILEPATH}" | while read x` is **useless use of `cat`** and can be replaced with `while read x < "${FILEPATH}"`.
+
+#### **3. Hardcoded Assumptions**
+- `awk -F "_" '{print ">" $2}'` assumes that the second field is the species name. If the naming convention changes, it will break.
+- The script doesn't create `OUTPUT_DIR` if it doesn't exist.
+
+---
+
+## **Alternative Code with Fixes**
+```bash
+#!/usr/bin/bash
+
+echo "Renaming outputs from pavlaras.sh"
+
+set -e  # Exit on error
+
+# Function to count the number of FASTA files in a directory
+get_number_of_files_to_rename(){
+    local in_folder=$1
+
+    if [[ ! -d "$in_folder" ]]; then
+        echo "Error: Input directory '$in_folder' does not exist." >&2
+        exit 1
+    fi
+
+    local nu_of_files=$(find "$in_folder" -maxdepth 1 -type f -name "output*.fa" | wc -l)
+    echo "Will rename $nu_of_files alignments."
+    echo "$nu_of_files"  # Return count
+}
+
+# Function to rename and modify FASTA files
+rename_fasta_files(){
+    local in_folder=$1
+    local output_dir=$2
+    local nu_of_files=$3
+
+    mkdir -p "$output_dir"  # Ensure output directory exists
+
+    for ((i=1; i<=nu_of_files; i++)); do
+        local filepath="${in_folder}/output${i}.fa"
+        
+        if [[ ! -f "$filepath" ]]; then
+            echo "Warning: File '$filepath' not found, skipping." >&2
+            continue
+        fi
+
+        local newfile="${output_dir}/output${i}.fa"
+
+        while read -r line; do
+            if [[ $line == ">"* ]]; then
+                echo "$line" | awk -F "_" '{print ">" $2}' >> "$newfile"
+            else
+                echo "$line" >> "$newfile"
+            fi
+        done < "$filepath"
+
+        echo "Renamed: $filepath -> $newfile"
+    done
+}
+
+main(){
+    local input_dir=${1%/}  # Remove trailing slash if present
+    local output_dir=${2%/}
+
+    echo "Input Directory: $input_dir"
+    echo "Output Directory: $output_dir"
+
+    local nu_of_files
+    nu_of_files=$(get_number_of_files_to_rename "$input_dir")
+
+    rename_fasta_files "$input_dir" "$output_dir" "$nu_of_files"
+}
+
+main "$@"
+```
+
+---
+
+### **Key Improvements**
+✅ **Error Handling**
+- Checks if directories exist before proceeding.
+- Warns about missing files instead of breaking the script.
+
+✅ **Efficiency**
+- Uses `find` instead of `ls` for counting files.
+- Eliminates unnecessary `cat` calls.
+- Uses `while read -r` properly to avoid issues with special characters.
+
+✅ **Portability**
+- Works in different shells and avoids unnecessary variable substitutions (`${INPUT_DIR//\//}` was removed).
+- Ensures that `OUTPUT_DIR` exists before writing files.
+
+Would you like any additional features, such as custom file naming? 🚀
+
+
+> for q1trees.sh 
+
+### **General Feedback**
+Your script effectively generates phylogenetic trees for multiple alignments using `iqtree2`. However, there are several **issues and limitations**:
+
+### **Issues & Improvements**
+
+#### **1. Hardcoded Input Directory in `get_number_of_trees`**
+- The function always processes `prouts` instead of using the provided `input_dir`.
+- If `prouts` is not the intended directory, the script might behave unexpectedly.
+
+#### **2. Inefficient & Error-Prone File Counting**
+- `ls | wc -l` is **not reliable** (it counts hidden files and directories).
+- Using `find` with a file filter (e.g., `*.fa`) is **more accurate**.
+
+#### **3. Unnecessary `|| true` in `iqtree2` Command**
+- `|| true` forces the script to ignore errors, making debugging difficult.
+- If `iqtree2` fails, you may not realize something is wrong.
+
+#### **4. Improper Variable Scope**
+- `nu_of_trees` is not explicitly returned, causing potential unintended behavior.
+
+#### **5. Potential Issues with Directory Handling**
+- The script does not check if `input_dir` exists before running.
+- It assumes all files are named `outputN.fa`, which may not always be true.
+
+---
+
+## **Alternative Code with Fixes**
+```bash
+#!/usr/bin/bash
+
+echo "This script creates phylogenetic trees for all alignments in a folder."
+
+set -e  # Exit on error
+
+# Function to count alignment files
+get_number_of_trees() {
+    local in_folder=$1
+
+    if [[ ! -d "$in_folder" ]]; then
+        echo "Error: Input directory '$in_folder' does not exist." >&2
+        exit 1
+    fi
+
+    local nu_of_trees=$(find "$in_folder" -maxdepth 1 -type f -name "output*.fa" | wc -l)
+    echo "I will produce trees for $nu_of_trees alignments."
+    echo "$nu_of_trees"  # Return the count
+}
+
+# Function to generate phylogenetic trees
+treemaker() {
+    local input_dir=$1
+    local output_dir=$2
+    local nu_of_trees=$3
+
+    mkdir -p "$output_dir"  # Ensure output directory exists
+
+    for ((i = 1; i <= nu_of_trees; i++)); do
+        local file_path="$input_dir/output${i}.fa"
+
+        if [[ ! -f "$file_path" ]]; then
+            echo "Warning: File '$file_path' not found, skipping." >&2
+            continue
+        fi
+
+        local exon_to_process
+        exon_to_process=$(head -n1 "$file_path" | awk -F "_" '{print $1 "_" $3}')
+        echo "Processing: $exon_to_process"
+
+        iqtree2 -s "$file_path" -redo -pre "$output_dir/tree${i}" 
+    done
+}
+
+# Main function
+main() {
+    local input_dir=${1%/}  # Remove trailing slashes
+    local output_dir=${2%/}
+
+    echo "Input Directory: $input_dir"
+    echo "Output Directory: $output_dir"
+
+    local nu_of_trees
+    nu_of_trees=$(get_number_of_trees "$input_dir")
+
+    treemaker "$input_dir" "$output_dir" "$nu_of_trees"
+}
+
+main "$@"
+```
+
+---
+
+## **Key Improvements**
+✅ **Fixed Hardcoded Input Directory**  
+- Now `get_number_of_trees` properly counts files in `input_dir`, not `"prouts"`.
+
+✅ **Reliable File Counting**
+- Uses `find "$input_dir" -maxdepth 1 -type f -name "output*.fa" | wc -l` to **avoid counting hidden files**.
+
+✅ **Proper Error Handling**
+- Checks if directories and files exist before proceeding.
+- Removes `|| true` in `iqtree2` to **catch errors instead of ignoring them**.
+
+✅ **More Robust Variable Handling**
+- Variables are **properly returned and passed** between functions.
+- Uses `"${1%/}"` to remove trailing slashes from input/output directory names.
+
+✅ **More Portable**
+- `mkdir -p "$output_dir"` ensures the directory exists without redundant `if` checks.
+
+---
+
+### **Would you like to add any extra functionality?**  
+For example:  
+- Parallel execution of `iqtree2` (to speed up processing).  
+- Logging execution times for each tree. 🚀:w

@@ -1,0 +1,181 @@
+
+PART 1: EXON TREES AND TREES COMPARISON WITH SUPERTREE
+
+
+Genes corresponding to exons with smallest distance:
+
+RF score:
+	6	>uc001hhe.4 --> CAMK1G calcium/calmodulin dependent protein kinase 
+	8	>uc001ecd.4 --> STL7L supression of tumorgenicity 7 like
+	8	>uc001ggs.5 --> SCY1-like3 (SCYL3) SCY1 like pseudokinase 3 
+	8 	>uc001ghi.3 --> FMO3 flavin containing monooxygenase 3 gene
+	8	>uc009wvz.4 --> FMO1 flavin containin monooxygenase 1 gene
+	8	>uc001bza.3 --> NCDN neurochondrin
+
+
+Chat GPT explanation...
+Here’s a summary of each gene’s function and evolutionary conservation:  
+
+### 1) **CAMK1G (Calcium/Calmodulin-Dependent Protein Kinase 1G)**  
+   - **Function**: CAMK1G is a member of the calcium/calmodulin-dependent protein kinase (CaMK) family, which plays a role in various cellular processes such as neuronal signaling, synaptic plasticity, and gene expression regulation. It is involved in phosphorylating target proteins in response to calcium influx.  
+   - **Evolutionary Conservation**: CAMK1G is conserved in vertebrates, particularly in mammals and birds, indicating its fundamental role in calcium signaling. Orthologs exist in various species, but sequence divergence is seen in invertebrates.
+
+### 2) **STL7L (Suppression of Tumorigenicity 7 Like)**  
+   - **Function**: The STL7L gene is poorly characterized, but it is related to the ST7 (Suppression of Tumorigenicity 7) family, which has been implicated in tumor suppression. ST7 is known to play a role in cell adhesion and signaling.  
+   - **Evolutionary Conservation**: STL7L has homologs in mammals, but its evolutionary conservation is less well studied compared to ST7. Its function in tumorigenesis suggests it may be subject to selective pressures in higher vertebrates.
+
+### 3) **SCYL3 (SCY1-Like Pseudokinase 3)**  
+   - **Function**: SCYL3 belongs to the SCY1-like family of pseudokinases. While it lacks catalytic activity, it is thought to play a role in intracellular trafficking and protein sorting, particularly in the Golgi apparatus.  
+   - **Evolutionary Conservation**: SCYL3 is conserved in vertebrates, with homologs found in fish, birds, and mammals. It likely evolved from an ancestral kinase but lost its catalytic function over time.
+
+### 4) **FMO3 (Flavin-Containing Monooxygenase 3)**  
+   - **Function**: FMO3 is an enzyme that catalyzes the oxidation of xenobiotics, including drugs and dietary compounds. It plays a crucial role in detoxification and metabolism of nitrogen-containing compounds, such as trimethylamine. Deficiency in FMO3 leads to trimethylaminuria ("fish odor syndrome").  
+   - **Evolutionary Conservation**: Highly conserved in mammals and other vertebrates, FMO3 belongs to the broader flavin-containing monooxygenase family, which dates back to early metazoans.
+
+### 5) **NCDN (Neurochondrin)**  
+   - **Function**: Neurochondrin is involved in synaptic plasticity, neuronal development, and signaling pathways. It plays a role in learning, memory, and possibly neuropsychiatric disorders.  
+   - **Evolutionary Conservation**: Highly conserved in vertebrates, particularly in mammals. Its role in neural function suggests strong selective pressure to maintain its function across species.
+
+### 6)  FMO1 encodes a flavin-containing monooxygenase, an enzyme that plays a key role in the oxidation of xenobiotics — foreign substances such as drugs, pesticides, and dietary compounds. Specifically, FMO1:
+Catalyzes the N- and S-oxidation of soft nucleophilic heteroatom-containing molecules.Is involved in drug metabolism, working alongside cytochrome P450 enzymes but typically acting on different substrates. Works using FAD (flavin adenine dinucleotide) as a cofactor and NADPH as an electron donor. Is active mainly in the kidneys and fetal liver in humans, but not highly expressed in adult human liver (unlike other FMO isoforms).
+
+	-Evolutionary conservation: FMO1 is evolutionarily conserved across mammals, indicating its important biological role. The FMO gene family (FMO1–FMO5 in humans) evolved through gene duplication, and each member has somewhat specialized substrate specificities and tissue distributions. Some FMOs have diverged more than others; FMO1 remains relatively conserved, especially in its active site motifs and catalytic function.
+
+Let me know if you need more details!
+
+
+Things I learned from chat GPT feedback on my code:
+
+For mainscript.sh 
+One of my functions (gooe()) is too complex and it is advised to break it down to smaller functions.
+I am trying to handle errors by exiting is specific steps which is good, but I couldn't have writtern a function dedicated to error handling, which would point more specifically to the issues that caused the errors.
+I have a few redundant export commands
+
+For vaptish.sh
+
+I haven't created the conditions for robust input and output directory handling and recognisiion, my script is very prone to user mistakes. 
+I learned that <ls|wc -l> also counts hidden files so it can lead to sum different than expected. It is better to use <find> instead of <ls> to count files. 
+
+For q1trees.sh 
+
+ Unnecessary || true in iqtree2 Command
+I have piped iqtree result to true because the program was stopping when
+there were not enough data to create the trees. So these erros were stoping my script from creating rest of the trees. Maybe I need to make another system to handle these errors of iqtree2. 
+
+Once again my ipnut and output directory handling is mediocre and could cause issues. My script doesn't check if one directory, the input dir exists, before running next lines of the program. 
+
+
+
+PART 2: GENE TREES AND TRE COMPARISON WITH SUPERTREE
+
+5 Genes with lowest score:
+
+RF 2	uc001aid.5	NADK	NAD kinase
+RF 2	uc001bja.4	STPG1	Sperm tail PG-rich repeat containing 1
+RF 2	uc001etl.5	MTMR11	myotubularin related protein 11
+RF 2	uc001gtj.4	CFH	complement factor H
+RF 2	uc057fhs.1	SCMH1	Scm polycomb group homolog 1
+
+ChatGPT summary: 
+
+🔹 NADK (Nicotinamide Adenine Dinucleotide Kinase)
+Function:
+    Encodes an enzyme that phosphorylates NAD⁺ to form NADP⁺, essential for redox reactions.
+    Plays a central role in maintaining the NADP⁺/NADPH pool, which is crucial for antioxidant defense and biosynthetic pathways.
+Evolutionary Conservation:
+    Highly conserved across all domains of life (prokaryotes to humans).
+    Orthologs are found in bacteria, yeast, plants, and animals, reflecting its fundamental metabolic importance.
+
+🔹 STPG1 (Sperm-Tail PG-Rich Repeat Containing 1)
+Function:
+    Poorly characterized; believed to be involved in spermatogenesis or sperm tail structure/function.
+    Contains proline/glycine-rich domains, suggesting structural or scaffolding roles.
+Evolutionary Conservation:
+    Conserved among mammals, particularly in species with internal fertilization.
+    Little or no conservation in lower organisms (bacteria, yeast, etc.), implying a specialized reproductive role.
+
+🔹 MTMR11 (Myotubularin Related Protein 11)
+Function:
+    Member of the myotubularin phosphatase family, but appears to lack catalytic activity (a pseudophosphatase).
+    May be involved in cell signaling or membrane trafficking, but exact role is unclear.
+Evolutionary Conservation:
+    Found in vertebrates, with homologs in humans, mice, zebrafish, etc.
+    More divergent than active MTMR family members, suggesting subfunctionalization or regulatory evolution.
+
+🔹 CFH (Complement Factor H)
+Function:
+    Major regulator of the complement system, particularly the alternative pathway.
+    Prevents damage to host tissues by inhibiting C3 convertase activity.
+    Mutations are linked to diseases like age-related macular degeneration (AMD) and atypical hemolytic uremic syndrome (aHUS).
+Evolutionary Conservation:
+    Highly conserved in vertebrates, especially in mammals.
+    Related complement regulatory proteins are found in fish and birds, indicating early evolutionary origins of innate immune regulation.
+
+🔹 SCMH1 (Scm Polycomb Group Protein Homolog 1)
+Function:
+    Member of the Polycomb group (PcG) of proteins, which repress gene transcription through epigenetic modification.
+    Important in embryonic development, cell fate decisions, and chromatin remodeling.
+Evolutionary Conservation:
+    Conserved across metazoans, including Drosophila (homolog: Scm).
+    Reflects a deeply conserved role in transcriptional repression and developmental patterning.
+
+5 genes with highest score: 
+
+RF 8	uc010oct.3	PAX7	paired box 7
+RF 10	uc001dqg.2	GCLM	glutamine-cysteine ligase 
+RF 12	uc001ate.6	CLCN6	chloride voltage-gated channel 6 
+RF 14	uc001boq.4	FAM76A	family with sequence similarity 76 member A
+RF 14 	uc001efl.4	CSDE1	cold shock domain containing E1
+
+🔹 PAX7 (Paired Box 7)
+Function:
+    A transcription factor involved in muscle satellite cell specification, muscle regeneration, and neural crest development.
+    Plays a critical role in myogenesis (muscle formation) and maintaining the muscle stem cell pool.
+    Interacts with other Pax genes like PAX3, and is essential during early embryonic development.
+Evolutionary Conservation:
+    Highly conserved among vertebrates, including fish, amphibians, birds, and mammals.
+    Orthologs with similar roles found in zebrafish and mice, reflecting its key developmental role.
+
+🔹 GCLM (Glutamate-Cysteine Ligase Modifier Subunit)
+Function:
+    Regulatory subunit of glutamate-cysteine ligase (GCL), the rate-limiting enzyme in glutathione biosynthesis.
+    While it lacks catalytic activity, GCLM increases the enzyme's efficiency and stability.
+    Crucial for oxidative stress response and detoxification.
+Evolutionary Conservation:
+    Conserved in eukaryotes, particularly across mammals and other vertebrates.
+    Glutathione biosynthesis is a core cellular defense mechanism, so functional analogs are present in plants and yeast as well.
+    
+🔹 CLCN6 (Chloride Voltage-Gated Channel 6)
+Function:
+    Encodes a chloride channel protein located in endosomes/lysosomes.
+    Likely involved in vesicular ion homeostasis, protein trafficking, and pH regulation.
+    Mutations have been associated with neurological disorders and may impact lysosomal storage pathways.
+Evolutionary Conservation:
+    Member of the CLCN gene family, conserved in mammals and other vertebrates.
+    Shares homology with other voltage-gated chloride channels, which are conserved across metazoans.
+
+🔹 FAM76A (Family with Sequence Similarity 76 Member A)
+Function:
+    Poorly characterized; thought to be a nuclear protein involved in RNA processing or nuclear body organization.
+    Expressed widely but with limited functional annotation in current literature.
+Evolutionary Conservation:
+    Found across vertebrates, with homologs in human, mouse, and other species.
+    Its conservation suggests a core cellular function, though its specific role remains to be fully understood.
+
+🔹 CSDE1 (Cold Shock Domain Containing E1)
+Function:
+    RNA-binding protein that regulates mRNA stability, translation, and RNA localization.
+    Involved in processes such as apoptosis, development, and cell differentiation.
+    Known to interact with internal ribosome entry sites (IRES) and modulate translation under stress.
+Evolutionary Conservation:
+    Highly conserved across metazoans, including flies (Drosophila), where the homolog is known as unr.
+    Its cold shock domains are a hallmark of RNA-binding proteins and are functionally important across species.
+    
+    
+    
+Discussion: 
+
+Most loci, whether exon or complete CDS appear to to be highly conserved among the species included in our alignment. Thus, in the second case 
+where we search into the properties of the 5 phylogenies that are either most similar or least similar to the concatenated alignment, the 
+two groups of genes, appear, as long as ChatGPT info are true, to be all highly conserved between the taxa analyzed. I think that the most interesting
+element of this analysis is the fact that the 5 exons with least distance from the concatenated alignment belong to genes different than the 5 CDS with least distance. This difference highlights the different analytical resolution achieve by analyzing single exon sites versus complete CDS. 

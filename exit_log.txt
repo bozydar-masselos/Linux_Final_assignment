@@ -1,0 +1,7 @@
+Number of exons to extract is: 500 
+File should contain exon alignments of 20 species.
+Finished the splitting
+Temporary_directory created
+Finished processing exons of 39 genes.
+-4 exons left non-processed. Exons left don't suffice for a complete gene.
+Finished concatenating genes of species. Output '.fasta' files are in './whole_genes_concatenated' folder in working directory.
